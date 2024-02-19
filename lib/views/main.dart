@@ -88,9 +88,7 @@ class AnimatedAppBar extends StatelessWidget implements PreferredSizeWidget { //
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      // when showAppBar value is true appbar will show with animation
-      // when showAppBar value is false appbar will hide with animation
-      height: showAppBar ? kToolbarHeight : 0,
+      height: showAppBar ? 1.4*kToolbarHeight : 0,
       //adjust your duration
       duration: const Duration(milliseconds: 400),
       child: AppBar(
