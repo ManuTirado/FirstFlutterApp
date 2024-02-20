@@ -3,6 +3,7 @@ import 'package:first_flutter_app/repositories/movies/MoviesRepoConstants.dart';
 import 'package:first_flutter_app/repositories/movies/MoviesRepository.dart';
 import 'package:first_flutter_app/repositories/movies/models/MovieDTO.dart';
 import 'package:first_flutter_app/repositories/movies/models/MovieListDTO.dart';
+import 'package:first_flutter_app/views/film_detail/film_detail_view.dart';
 import 'package:first_flutter_app/views/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -42,8 +43,8 @@ class _FilmsListView extends State<FilmsListView> {
     var appState = context.watch<MyAppState>();
 
     _scrollController.addListener(() {
-
-      if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
         appState.setAppbarVisibility(true);
       } else {
         appState.setAppbarVisibility(false);
@@ -62,7 +63,7 @@ class _FilmsListView extends State<FilmsListView> {
       return Text("Ha ocurrido un error, vuelva a intentarla más tarde");
     } else {
       if (moviesList.isEmpty) {
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       } else {
         return Column(
           children: [
@@ -112,9 +113,7 @@ class _FilmsListView extends State<FilmsListView> {
     });
     try {
       MovieListDTO result =
-      await MoviesRepository.getFeaturedMovies(page, SortBy.popularity);
-
-      await Future.delayed(const Duration(seconds: 2));
+          await MoviesRepository.getFeaturedMovies(page, SortBy.popularity);
 
       if (result.totalPages == page) {
         reachedEnd = true;
@@ -128,7 +127,7 @@ class _FilmsListView extends State<FilmsListView> {
         }
       });
     } catch (identifier) {
-      print("Error: ${ identifier } ");
+      print("Error: ${identifier} ");
       setState(() {
         error = true;
       });
@@ -150,27 +149,65 @@ class MovieCellView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     return Padding(
         padding: const EdgeInsets.all(5),
-        child: Container(
-          color: AppColors.backgroundDark.color.withOpacity(0.2),
-        child:  Column(
-          children: [
-            FadeInImage.memoryNetwork(
-              width: MediaQuery.of(context).size.width / 2 - 5,
-              height: (MediaQuery.of(context).size.width / 2 - 5)*1.4,
-              fit: BoxFit.fill,
-              placeholder: kTransparentImage,
-              image: "${MoviesRepoConstants.imageBaseUrl}${movie.posterPath}",
+        child: GestureDetector(
+          onTap: () {
+            appState.setAppbarVisibility(false);
+            Navigator.of(context).push(_createRoute(movie));
+          },
+          child: Container(
+            color: AppColors.backgroundDark.color.withOpacity(0.2),
+            child: Column(
+              children: [
+                FadeInImage.memoryNetwork(
+                  width: MediaQuery.of(context).size.width / 2 - 5,
+                  height: (MediaQuery.of(context).size.width / 2 - 5) * 1.4,
+                  fit: BoxFit.fill,
+                  placeholder: kTransparentImage,
+                  image:
+                      "${MoviesRepoConstants.imageBaseUrl}${movie.posterPath}",
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Text(movie.title,
+                      maxLines: 2,
+                      softWrap: true,
+                      overflow: TextOverflow.fade,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          height: 1,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.secondary.color)),
+                ),
+                const Spacer()
+              ],
             ),
-            const Spacer(),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: Text(movie.title, maxLines: 2, softWrap: true, overflow: TextOverflow.fade, textAlign: TextAlign.center, style: TextStyle(fontSize: 18, height: 1, fontWeight: FontWeight.bold, color: AppColors.secondary.color)),
-      ),
-            const Spacer()
-          ],
-        ),)
+          ),
+        ));
+  }
+
+  Route _createRoute(MovieDTO movie) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          FilmDetailView(movie: movie),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }

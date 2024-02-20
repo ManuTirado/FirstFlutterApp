@@ -44,9 +44,16 @@ class BottomTabBarWidget extends StatefulWidget {
 class _BottomTabBarWidget extends State<BottomTabBarWidget> {
 
   int _selectedIndex = 1;
-  static const List _tabPages = [
-    Text('I travel by Car'),
-    FilmsListView(),
+  static final List _tabPages = [
+    const Text('I travel by Car'),
+    Navigator(
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => const FilmsListView(),
+        );
+      },
+    ),
+
     Text('I like to ride my bycycle'),
   ];
 
