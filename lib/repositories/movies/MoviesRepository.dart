@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:first_flutter_app/repositories/movies/MoviesRepoConstants.dart';
-import 'package:first_flutter_app/repositories/movies/models/MovieListDTO.dart';
+import 'package:first_flutter_app/repositories/movies/models/genre_list_dto.dart';
+import 'package:first_flutter_app/repositories/movies/models/movie_list_dto.dart';
 import 'package:http/http.dart' as http;
 
 class MoviesRepository {
@@ -11,7 +11,7 @@ class MoviesRepository {
 
     final response = await http
         .get(
-        Uri.parse(MoviesRepoConstants.baseUrl + MoviesRepoConstants.discoverPath(page, sortBy)),
+        Uri.parse(MoviesRepoConstants.discoverUrl(page, sortBy)),
       headers: {
         "accept": "application/json",
         "Authorization": "Bearer ${ MoviesRepoConstants.apiToken }",
@@ -25,4 +25,21 @@ class MoviesRepository {
     }
   }
 
+  static Future<GenreListDTO> getGenreList() async {
+
+    final response = await http
+        .get(
+      Uri.parse(MoviesRepoConstants.getGenresUrl),
+      headers: {
+        "accept": "application/json",
+        "Authorization": "Bearer ${ MoviesRepoConstants.apiToken }",
+      },);
+
+    if (response.statusCode == 200) {
+      return GenreListDTO.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    } else {
+      throw Exception('Failed to load featured movies');
+    }
+  }
 }

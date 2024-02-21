@@ -1,4 +1,5 @@
 import 'package:first_flutter_app/config/theme/app_theme.dart';
+import 'package:first_flutter_app/repositories/movies/models/genre_list_dto.dart';
 import 'package:first_flutter_app/views/films_list/films_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,6 @@ class BottomTabBarWidget extends StatefulWidget {
 }
 
 class _BottomTabBarWidget extends State<BottomTabBarWidget> {
-
   int _selectedIndex = 1;
   static final List _tabPages = [
     const Text('I travel by Car'),
@@ -53,7 +53,6 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
         );
       },
     ),
-
     Text('I like to ride my bycycle'),
   ];
 
@@ -68,8 +67,9 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
     var appState = context.watch<MyAppState>();
 
     return Scaffold(
-      appBar: AnimatedAppBar(showAppBar: appState.showAppbar,),
-
+      appBar: AnimatedAppBar(
+        showAppBar: appState.showAppbar,
+      ),
       body: Center(
         child: _tabPages[_selectedIndex],
       ),
@@ -84,10 +84,10 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
       ),
     );
   }
-
 }
 
-class AnimatedAppBar extends StatelessWidget implements PreferredSizeWidget { //implements PreferredSizeWidget
+class AnimatedAppBar extends StatelessWidget implements PreferredSizeWidget {
+  //implements PreferredSizeWidget
   const AnimatedAppBar({super.key, required this.showAppBar});
 
   final bool showAppBar;
@@ -95,14 +95,13 @@ class AnimatedAppBar extends StatelessWidget implements PreferredSizeWidget { //
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      height: showAppBar ? 1.4*kToolbarHeight : 0,
-      //adjust your duration
-      duration: const Duration(milliseconds: 400),
-      child: AppBar(
-        title: Text("PelisRegister"),
-        centerTitle: true,
-      )
-    );
+        height: showAppBar ? 1.4 * kToolbarHeight : 0,
+        //adjust your duration
+        duration: const Duration(milliseconds: 400),
+        child: AppBar(
+          title: Text("PelisRegister"),
+          centerTitle: true,
+        ));
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:first_flutter_app/repositories/movies/models/MovieDTO.dart';
+import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
 
 class MovieListDTO {
   final int page;

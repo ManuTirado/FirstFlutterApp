@@ -13,14 +13,18 @@ class MoviesRepoConstants {
   static const String imageBaseUrl = "https://image.tmdb.org/t/p/w500";
   static const String imageBaseUrlOriginal = "https://image.tmdb.org/t/p/original";
 
-  static String discoverPath(int page, SortBy sortBy) {
+  static const String getGenresUrl = "${baseUrl}genre/movie/list?language=es";
+
+  static const String dateFormat = "yyyy-MM-dd";
+
+  static String discoverUrl(int page, SortBy sortBy) {
     switch (sortBy) {
       case SortBy.popularity:
-        return "discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=popularity.desc";
+        return "${baseUrl}discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=popularity.desc";
       case SortBy.votes:
-        return "discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=vote_average.desc";
+        return "${baseUrl}discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=vote_average.desc";
       case SortBy.latest:
-        return "discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=primary_release_date.desc";
+        return "${baseUrl}discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=primary_release_date.desc";
     }
   }
 }
