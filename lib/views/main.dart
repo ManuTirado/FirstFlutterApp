@@ -70,7 +70,6 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
   @override
   void initState() {
     super.initState();
-    print("Init");
     fetchGenres();
   }
 
@@ -99,11 +98,8 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
 
   fetchGenres() async {
     try {
-      print("Getting genres");
       GenreListDTO result = await MoviesRepository.getGenreList();
-      print("Got genres");
       storage.setItem(Constants.storageGenresKey, result.genres);
-      print("Saved genres");
     } catch (identifier) {
       print("Error: ${identifier} ");
     }

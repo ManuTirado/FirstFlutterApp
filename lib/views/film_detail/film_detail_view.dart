@@ -27,15 +27,7 @@ class FilmDetailView extends StatelessWidget {
           placeholder: kTransparentImage,
           image: "${MoviesRepoConstants.imageBaseUrl}${movie.backdropPath}",
         ),
-        ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-            child: Container(
-                color: Colors.black.withOpacity(0.3),
-                alignment: Alignment.center,
-                child: MovieDetailsView(movie: movie)),
-          ),
-        ),
+        buildBlurBackGround(MovieDetailsView(movie: movie), 6, Colors.black.withOpacity(0.3)),
       ],
     ));
   }
@@ -52,11 +44,12 @@ class MovieDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final LocalStorage storage = LocalStorage(Constants.storageKey);
-
+    final Iterable<GenreDTO> genres = storage.getItem(Constants.storageGenresKey) ?? [];
     return Column(children: [
-      buildNavBar(context),
+      buildBlurBackGround(buildNavBar(context), 6, Colors.black.withOpacity(0.5)),
       buildHeader(),
-      buildBody(storage.getItem(Constants.storageGenresKey)),
+      buildBody(genres),
+
     ]);
   }
 
@@ -106,7 +99,7 @@ class MovieDetailsView extends StatelessWidget {
 
   Padding buildHeader() {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -192,4 +185,16 @@ class MovieDetailsView extends StatelessWidget {
         style: const TextStyle(
             color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold));
   }
+}
+
+ClipRRect buildBlurBackGround(Widget foregroundView, double blur, Color backgroundColor) {
+  return ClipRRect(
+    child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+      child: Container(
+          color: backgroundColor,
+          alignment: Alignment.center,
+          child: foregroundView),
+    ),
+  );
 }
