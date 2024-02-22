@@ -1,6 +1,6 @@
 import 'package:first_flutter_app/config/theme/app_theme.dart';
-import 'package:first_flutter_app/repositories/movies/MoviesRepoConstants.dart';
-import 'package:first_flutter_app/repositories/movies/MoviesRepository.dart';
+import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart';
+import 'package:first_flutter_app/repositories/movies/movies_repository.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_list_dto.dart';
 import 'package:first_flutter_app/views/film_detail/film_detail_view.dart';

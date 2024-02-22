@@ -1,12 +1,15 @@
 import 'dart:ui';
-import 'package:first_flutter_app/repositories/movies/MoviesRepoConstants.dart';
+import 'package:first_flutter_app/repositories/movies/models/genre_dto.dart';
+import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
-import 'package:first_flutter_app/resources/common/Extensions.dart';
+import 'package:first_flutter_app/resources/common/constants_common.dart';
+import 'package:first_flutter_app/resources/common/extensions.dart';
 import 'package:first_flutter_app/views/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+
 
 class FilmDetailView extends StatelessWidget {
   const FilmDetailView({Key? key, required this.movie}) : super(key: key);
@@ -48,10 +51,12 @@ class MovieDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LocalStorage storage = LocalStorage(Constants.storageKey);
+
     return Column(children: [
       buildNavBar(context),
       buildHeader(),
-      buildBody(),
+      buildBody(storage.getItem(Constants.storageGenresKey)),
     ]);
   }
 
@@ -136,13 +141,19 @@ class MovieDetailsView extends StatelessWidget {
         ));
   }
 
-  Expanded buildBody() {
+  Expanded buildBody(Iterable<GenreDTO> genres) {
     return Expanded(
         child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: ListView(
               scrollDirection: Axis.vertical,
               children: [
+                const Text("Sinopsis:",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+                const SizedBox(height: 15),
                 Text(
                   movie.overview,
                   style: const TextStyle(
@@ -150,29 +161,35 @@ class MovieDetailsView extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 const Text("Categorías:",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    for (var genreId in movie.genreIds)
-                      buildCategoryCell(genreId),
-                  ],
-                ),
+                const SizedBox(height: 15),
+                buildCategoryCells(genres, movie.genreIds),
                 const SizedBox(height: 20),
               ],
             )));
   }
 
-  Container buildCategoryCell(genreId) {
-    return Container(
-      child: Padding(padding: EdgeInsets.only(right: 10), child: Text(genreId.toString(),
-          style: const TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
-    );
+  Text buildCategoryCells(Iterable<GenreDTO> genres, Iterable<int> genreIds) {
+    String res = "";
+    Iterable<String> genreNames = [];
+    genreNames = genres
+        .where((element) => genreIds.contains(element.id))
+        .map((e) => e.name);
+
+    for (int index = 0; index < genreNames.length; index++) {
+      if(index == 0 || index == genreNames.length) {
+        res += "${genreNames.toList()[index]}";
+      } else {
+        res += "  -  ${genreNames.toList()[index]}";
+      }
+    }
+    return Text(res,
+        style: const TextStyle(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold));
   }
 }

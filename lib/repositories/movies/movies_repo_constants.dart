@@ -15,8 +15,6 @@ class MoviesRepoConstants {
 
   static const String getGenresUrl = "${baseUrl}genre/movie/list?language=es";
 
-  static const String dateFormat = "yyyy-MM-dd";
-
   static String discoverUrl(int page, SortBy sortBy) {
     switch (sortBy) {
       case SortBy.popularity:

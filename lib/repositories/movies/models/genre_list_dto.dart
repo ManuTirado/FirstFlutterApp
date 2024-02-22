@@ -9,7 +9,7 @@ class GenreListDTO {
 
   factory GenreListDTO.fromJson(Map<String, dynamic> json) {
     return GenreListDTO(
-        genres: json['genres']
+        genres: List<GenreDTO>.from(json['genres'].map((result) => GenreDTO.fromJson(result)))
     );
   }
 }

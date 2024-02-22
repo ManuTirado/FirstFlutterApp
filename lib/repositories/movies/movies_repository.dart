@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:first_flutter_app/repositories/movies/MoviesRepoConstants.dart';
+import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart';
 import 'package:first_flutter_app/repositories/movies/models/genre_list_dto.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_list_dto.dart';
 import 'package:http/http.dart' as http;

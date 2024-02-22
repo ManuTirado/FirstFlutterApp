@@ -1,7 +1,10 @@
 import 'package:first_flutter_app/config/theme/app_theme.dart';
 import 'package:first_flutter_app/repositories/movies/models/genre_list_dto.dart';
+import 'package:first_flutter_app/repositories/movies/movies_repository.dart';
+import 'package:first_flutter_app/resources/common/constants_common.dart';
 import 'package:first_flutter_app/views/films_list/films_list_view.dart';
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -43,7 +46,9 @@ class BottomTabBarWidget extends StatefulWidget {
 }
 
 class _BottomTabBarWidget extends State<BottomTabBarWidget> {
+  final LocalStorage storage = LocalStorage(Constants.storageKey);
   int _selectedIndex = 1;
+
   static final List _tabPages = [
     const Text('I travel by Car'),
     Navigator(
@@ -60,6 +65,13 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("Init");
+    fetchGenres();
   }
 
   @override
@@ -83,6 +95,18 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
         ],
       ),
     );
+  }
+
+  fetchGenres() async {
+    try {
+      print("Getting genres");
+      GenreListDTO result = await MoviesRepository.getGenreList();
+      print("Got genres");
+      storage.setItem(Constants.storageGenresKey, result.genres);
+      print("Saved genres");
+    } catch (identifier) {
+      print("Error: ${identifier} ");
+    }
   }
 }
 
