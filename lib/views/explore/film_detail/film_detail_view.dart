@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:first_flutter_app/repositories/favorite_movies/favorite_movies_constants.dart';
-import 'package:first_flutter_app/repositories/favorite_movies/models/favorite_movie_dto.dart';
+import 'package:first_flutter_app/repositories/local_movies/models/watchlist_movie_dto.dart';
+import 'package:first_flutter_app/repositories/local_movies/repos/watchlist_movies_repository.dart';
 import 'package:first_flutter_app/repositories/movies/models/genre_dto.dart';
 import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
@@ -10,7 +10,6 @@ import 'package:first_flutter_app/views/main.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class FilmDetailView extends StatelessWidget {
@@ -49,9 +48,9 @@ class _MovieDetailsView extends State<MovieDetailsView> {
 
   LocalStorage? storage;
   Iterable<GenreDTO>? genres;
-  List<FavoriteMovie> favoriteMovies = [];
+  List<IdMovie> favoriteMovies = [];
   bool isFavorite () {
-    return favoriteMovies.contains(FavoriteMovie(id: movie.id)) ? true : false;
+    return favoriteMovies.contains(IdMovie(id: movie.id)) ? true : false;
   }
 
   @override
@@ -215,50 +214,26 @@ class _MovieDetailsView extends State<MovieDetailsView> {
   }
 
   void _changeFavorites() async {
-    if (favoriteMovies.contains(FavoriteMovie(id: movie.id))) {
-      await _deleteFavoriteMovie();
+    if (favoriteMovies.contains(IdMovie(id: movie.id))) {
+      print("Contains");
+      await WatchlistMoviesRepository.deleteFavoriteMovie(movie.id);
     } else {
-      await _insertFavoriteMovie();
+      print("Doesn't Contains");
+      await WatchlistMoviesRepository.insertFavoriteMovie(movie);
     }
-    final res = await _getFavoriteMovies();
+    final res = await WatchlistMoviesRepository.getFavoriteMovies();
+    print("RES; $res");
     setState(() {
       favoriteMovies = res;
     });
   }
 
   void _setInitialState() async {
-    final favorites = await _getFavoriteMovies();
+    final favorites = await WatchlistMoviesRepository.getFavoriteMovies();
 
     setState(() {
       favoriteMovies = favorites;
     });
-  }
-
-  Future<List<FavoriteMovie>> _getFavoriteMovies() async {
-    final List<Map<String, Object?>> favoritesMaps = await MyAppState.db.query(FavoriteMoviesConstants.favoriteMoviesTable);
-    final res = [
-      for (final {
-      'id': id as int
-      } in favoritesMaps)
-        FavoriteMovie(id: id),
-    ];
-    return res;
-  }
-
-  Future<void> _insertFavoriteMovie() async {
-    await MyAppState.db.insert(
-      FavoriteMoviesConstants.favoriteMoviesTable,
-      FavoriteMovie(id: movie.id).toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<void> _deleteFavoriteMovie() async {
-    await MyAppState.db.delete(
-      FavoriteMoviesConstants.favoriteMoviesTable,
-      where: 'id = ?',
-      whereArgs: [movie.id],
-    );
   }
 }
 

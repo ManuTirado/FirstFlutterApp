@@ -1,14 +1,14 @@
 import 'package:first_flutter_app/config/theme/app_theme.dart';
-import 'package:first_flutter_app/repositories/favorite_movies/favorite_movies_constants.dart';
+import 'package:first_flutter_app/repositories/local_movies/local_movies_constants.dart';
 import 'package:first_flutter_app/repositories/movies/models/genre_list_dto.dart';
 import 'package:first_flutter_app/repositories/movies/movies_repository.dart';
 import 'package:first_flutter_app/resources/common/constants_common.dart';
-import 'package:first_flutter_app/views/films_list/films_list_view.dart';
+import 'package:first_flutter_app/views/explore/films_list/films_list_view.dart';
+import 'package:first_flutter_app/views/watchlist/watchlist_view.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -23,8 +23,8 @@ class MyAppState extends ChangeNotifier {
   static late Database db;
 
   void initializeBD() async {
-    db = await openDatabase(await getDatabasesPath() + FavoriteMoviesConstants.db, version: 1);
-    db.execute('CREATE TABLE ${FavoriteMoviesConstants.favoriteMoviesTable}(id INTEGER PRIMARY KEY)');
+    db = await openDatabase(await getDatabasesPath() + LocalMoviesConstants.db, version: 1);
+    db.execute('CREATE TABLE ${LocalMoviesConstants.watchlistMoviesTable}(id INTEGER PRIMARY KEY, title TEXT, imageUrl TEXT)');
   }
 
   void setAppbarVisibility(bool visible) {
@@ -63,7 +63,17 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
   int _selectedIndex = 1;
 
   static final List _tabPages = [
-    const Text('I travel by Car'),
+    const WatchListView(),
+    /*
+    Navigator(
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => const WatchListView(),
+        );
+      },
+    ),
+
+     */
     Navigator(
       onGenerateRoute: (settings) {
         return MaterialPageRoute(
@@ -71,7 +81,6 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
         );
       },
     ),
-    Text('I like to ride my bycycle'),
   ];
 
   void _onItemTapped(int index) {
@@ -103,7 +112,6 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Mi lista'),
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explorar'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );

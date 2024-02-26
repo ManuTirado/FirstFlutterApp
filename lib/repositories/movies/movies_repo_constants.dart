@@ -25,4 +25,8 @@ class MoviesRepoConstants {
         return "${baseUrl}discover/movie?include_adult=false&include_video=false&language=es-ES&page=$page&sort_by=primary_release_date.desc";
     }
   }
+
+  static String getMovieDetailUrl(int id) {
+    return "${baseUrl}movie/$id?language=es-ES";
+  }
 }

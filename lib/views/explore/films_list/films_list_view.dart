@@ -3,7 +3,7 @@ import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart
 import 'package:first_flutter_app/repositories/movies/movies_repository.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_list_dto.dart';
-import 'package:first_flutter_app/views/film_detail/film_detail_view.dart';
+import 'package:first_flutter_app/views/explore/film_detail/film_detail_view.dart';
 import 'package:first_flutter_app/views/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

@@ -1,12 +1,16 @@
 
-class FavoriteMovie {
+class IdMovie {
   final int id;
+  final String? title;
+  final String? imageUrl;
 
-  const FavoriteMovie({required this.id});
+  const IdMovie({required this.id, this.title, this.imageUrl});
 
   Map<String, Object?> toMap() {
     return {
-      'id': id
+      'id': id,
+      'title': title,
+      'imageUrl': imageUrl
     };
   }
   
@@ -18,7 +22,7 @@ class FavoriteMovie {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is FavoriteMovie
+    return other is IdMovie
         && other.id == id;
   }
 
@@ -27,6 +31,6 @@ class FavoriteMovie {
 
   @override
   String toString() {
-    return 'FavoriteMovie{id: $id}';
+    return 'IdMovie{id: $id, title: $title, imageUrl: $imageUrl}';
   }
 }
