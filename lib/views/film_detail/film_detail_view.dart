@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:first_flutter_app/repositories/favorite_movies/favorite_movies_constants.dart';
+import 'package:first_flutter_app/repositories/favorite_movies/models/favorite_movie_dto.dart';
 import 'package:first_flutter_app/repositories/movies/models/genre_dto.dart';
 import 'package:first_flutter_app/repositories/movies/movies_repo_constants.dart';
 import 'package:first_flutter_app/repositories/movies/models/movie_dto.dart';
@@ -8,12 +10,19 @@ import 'package:first_flutter_app/views/main.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-
-class FilmDetailView extends StatelessWidget {
+class FilmDetailView extends StatefulWidget {
   const FilmDetailView({Key? key, required this.movie}) : super(key: key);
+  final MovieDTO movie;
 
+  @override
+  State<FilmDetailView> createState() => _FilmDetailView(movie: movie);
+}
+
+class _FilmDetailView extends State<FilmDetailView> {
+  _FilmDetailView({required this.movie});
   final MovieDTO movie;
 
   @override
@@ -27,29 +36,48 @@ class FilmDetailView extends StatelessWidget {
           placeholder: kTransparentImage,
           image: "${MoviesRepoConstants.imageBaseUrl}${movie.backdropPath}",
         ),
-        buildBlurBackGround(MovieDetailsView(movie: movie), 6, Colors.black.withOpacity(0.3)),
+        buildBlurBackGround(
+            MovieDetailsView(movie: movie), 6, Colors.black.withOpacity(0.3)),
       ],
     ));
   }
 }
 
-class MovieDetailsView extends StatelessWidget {
-  const MovieDetailsView({
-    super.key,
-    required this.movie,
-  });
-
+class MovieDetailsView extends StatefulWidget {
+  const MovieDetailsView({super.key, required this.movie});
   final MovieDTO movie;
 
   @override
-  Widget build(BuildContext context) {
-    final LocalStorage storage = LocalStorage(Constants.storageKey);
-    final Iterable<GenreDTO> genres = storage.getItem(Constants.storageGenresKey) ?? [];
-    return Column(children: [
-      buildBlurBackGround(buildNavBar(context), 6, Colors.black.withOpacity(0.5)),
-      buildHeader(),
-      buildBody(genres),
+  State<MovieDetailsView> createState() => _MovieDetailsView(movie: movie);
+}
 
+class _MovieDetailsView extends State<MovieDetailsView> {
+  _MovieDetailsView({required this.movie});
+  final MovieDTO movie;
+
+  LocalStorage? storage;
+  Iterable<GenreDTO>? genres;
+
+  List<FavoriteMovie> favoriteMovies = [];
+
+  bool isFavorite () {
+    return favoriteMovies.contains(FavoriteMovie(id: movie.id)) ? true : false;
+  }
+
+  @override
+  void initState() {
+    _setInitialState();
+    _getGenres();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      buildBlurBackGround(
+          buildNavBar(context), 6, Colors.black.withOpacity(0.5)),
+      buildHeader(),
+      buildBody(),
     ]);
   }
 
@@ -90,9 +118,12 @@ class MovieDetailsView extends StatelessWidget {
           ],
         )),
         IconButton(
-            icon: const Icon(Icons.bookmark_border),
+            icon: Icon(
+                isFavorite() ? Icons.bookmark_added : Icons.bookmark_border),
             color: Colors.white,
-            onPressed: () {}),
+            onPressed: () {
+              _changeFavorites();
+            }),
       ]),
     );
   }
@@ -134,7 +165,7 @@ class MovieDetailsView extends StatelessWidget {
         ));
   }
 
-  Expanded buildBody(Iterable<GenreDTO> genres) {
+  Expanded buildBody() {
     return Expanded(
         child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -161,7 +192,7 @@ class MovieDetailsView extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 15),
-                buildCategoryCells(genres, movie.genreIds),
+                buildCategoryCells(genres ?? [], movie.genreIds),
                 const SizedBox(height: 20),
               ],
             )));
@@ -175,7 +206,7 @@ class MovieDetailsView extends StatelessWidget {
         .map((e) => e.name);
 
     for (int index = 0; index < genreNames.length; index++) {
-      if(index == 0 || index == genreNames.length) {
+      if (index == 0 || index == genreNames.length) {
         res += "${genreNames.toList()[index]}";
       } else {
         res += "  -  ${genreNames.toList()[index]}";
@@ -185,9 +216,64 @@ class MovieDetailsView extends StatelessWidget {
         style: const TextStyle(
             color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold));
   }
+
+  void _getGenres() {
+    storage = LocalStorage(Constants.storageKey);
+    setState(() {
+      genres = storage?.getItem(Constants.storageGenresKey);
+    });
+  }
+
+  void _changeFavorites() async {
+    if (favoriteMovies.contains(FavoriteMovie(id: movie.id))) {
+      await _deleteFavoriteMovie();
+    } else {
+      await _insertFavoriteMovie();
+    }
+    final res = await _getFavoriteMovies();
+    setState(() {
+      favoriteMovies = res;
+    });
+  }
+
+  void _setInitialState() async {
+    final favorites = await _getFavoriteMovies();
+
+    setState(() {
+      favoriteMovies = favorites;
+    });
+  }
+
+  Future<List<FavoriteMovie>> _getFavoriteMovies() async {
+    final List<Map<String, Object?>> favoritesMaps = await MyAppState.db.query(FavoriteMoviesConstants.favoriteMoviesTable);
+    final res = [
+      for (final {
+      'id': id as int
+      } in favoritesMaps)
+        FavoriteMovie(id: id),
+    ];
+    return res;
+  }
+
+  Future<void> _insertFavoriteMovie() async {
+    await MyAppState.db.insert(
+      FavoriteMoviesConstants.favoriteMoviesTable,
+      FavoriteMovie(id: movie.id).toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> _deleteFavoriteMovie() async {
+    await MyAppState.db.delete(
+      FavoriteMoviesConstants.favoriteMoviesTable,
+      where: 'id = ?',
+      whereArgs: [movie.id],
+    );
+  }
 }
 
-ClipRRect buildBlurBackGround(Widget foregroundView, double blur, Color backgroundColor) {
+ClipRRect buildBlurBackGround(
+    Widget foregroundView, double blur, Color backgroundColor) {
   return ClipRRect(
     child: BackdropFilter(
       filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
