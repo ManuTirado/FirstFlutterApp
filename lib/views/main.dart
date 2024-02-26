@@ -120,7 +120,6 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
 }
 
 class AnimatedAppBar extends StatelessWidget implements PreferredSizeWidget {
-  //implements PreferredSizeWidget
   const AnimatedAppBar({super.key, required this.showAppBar});
 
   final bool showAppBar;

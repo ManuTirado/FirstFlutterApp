@@ -9,10 +9,6 @@ class FavoriteMovie {
       'id': id
     };
   }
-
-  @override
-  // TODO: implement hashCode
-  int get hashCode => Object.hash(super.hashCode, id);
   
   @override
   bool operator ==(Object other) {
@@ -25,6 +21,9 @@ class FavoriteMovie {
     return other is FavoriteMovie
         && other.id == id;
   }
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, id);
 
   @override
   String toString() {

@@ -13,33 +13,25 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class FilmDetailView extends StatefulWidget {
+class FilmDetailView extends StatelessWidget {
   const FilmDetailView({Key? key, required this.movie}) : super(key: key);
-  final MovieDTO movie;
-
-  @override
-  State<FilmDetailView> createState() => _FilmDetailView(movie: movie);
-}
-
-class _FilmDetailView extends State<FilmDetailView> {
-  _FilmDetailView({required this.movie});
   final MovieDTO movie;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
-      fit: StackFit.expand,
-      children: [
-        FadeInImage.memoryNetwork(
-          fit: BoxFit.cover,
-          placeholder: kTransparentImage,
-          image: "${MoviesRepoConstants.imageBaseUrl}${movie.backdropPath}",
-        ),
-        buildBlurBackGround(
-            MovieDetailsView(movie: movie), 6, Colors.black.withOpacity(0.3)),
-      ],
-    ));
+          fit: StackFit.expand,
+          children: [
+            FadeInImage.memoryNetwork(
+              fit: BoxFit.cover,
+              placeholder: kTransparentImage,
+              image: "${MoviesRepoConstants.imageBaseUrl}${movie.backdropPath}",
+            ),
+            buildBlurBackGround(
+                MovieDetailsView(movie: movie), 6, Colors.black.withOpacity(0.3)),
+          ],
+        ));
   }
 }
 
@@ -57,9 +49,7 @@ class _MovieDetailsView extends State<MovieDetailsView> {
 
   LocalStorage? storage;
   Iterable<GenreDTO>? genres;
-
   List<FavoriteMovie> favoriteMovies = [];
-
   bool isFavorite () {
     return favoriteMovies.contains(FavoriteMovie(id: movie.id)) ? true : false;
   }
