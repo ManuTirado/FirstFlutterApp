@@ -1,16 +1,15 @@
-# first_flutter_app
+## Manuel Tirado García
 
-A new Flutter project.
+# PelisRegister
 
-## Getting Started
+This project created in Flutter is a proof of concepts in this technology. <br>
+In this I have implemented:<br>
+- Clean code principles
+- Data persistence with local **SQLite** and **Shared Preferences**
+- Getting data from **API**
+- **Infinite scroll** with paged service
+- Flutter **navigation**
+- Asynchronous tasks
+- Animations
+- Different flutter Widgets, layout...
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
