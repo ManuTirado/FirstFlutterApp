@@ -1,4 +1,6 @@
-## Manuel Tirado García
+![Static Badge](https://img.shields.io/badge/Manuel%20Tirado-blue?style=for-the-badge&logo=linkedin&link=www.linkedin.com%2Fin%2Fmanuel-tirado-garc%C3%ADa)
+![GitHub followers](https://img.shields.io/github/followers/ManuTirado?style=for-the-badge&logo=github)
+![GitHub top language](https://img.shields.io/github/languages/top/ManuTirado/FirstFlutterApp?style=for-the-badge)
 
 # PelisRegister
 
@@ -12,4 +14,9 @@ In this I have implemented:<br>
 - Asynchronous tasks
 - Animations
 - Different flutter Widgets, layout...
+
+
+
+
+https://github.com/ManuTirado/FirstFlutterApp/assets/140704715/d497ce1f-1c7d-40ac-b711-94ebc16982da
 
