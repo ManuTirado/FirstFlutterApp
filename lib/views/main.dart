@@ -63,18 +63,16 @@ class _BottomTabBarWidget extends State<BottomTabBarWidget> {
   int _selectedIndex = 1;
 
   static final List _tabPages = [
-    const WatchListView(),
-    /*
     Navigator(
+      key: const Key("FirstTab"),
       onGenerateRoute: (settings) {
         return MaterialPageRoute(
           builder: (context) => const WatchListView(),
         );
       },
     ),
-
-     */
     Navigator(
+      key: const Key("SecondTab"),
       onGenerateRoute: (settings) {
         return MaterialPageRoute(
           builder: (context) => const FilmsListView(),
